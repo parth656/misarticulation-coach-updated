@@ -7,12 +7,12 @@ import streamlit as st
 from audio_recorder_streamlit import audio_recorder
 from speech_analyzer import SpeechAnalyzer
 
-st.set_page_config(page_title="NeuroSpeech Coach", page_icon="🎙️", layout="wide")
+st.set_page_config(page_title="NeuroSpeech Coach", page_icon="ðŸŽ™ï¸", layout="wide")
 st.markdown("""
 <style>
 .block-container{max-width:1100px;padding-top:1.5rem}.hero{padding:1.4rem;border-radius:22px;background:linear-gradient(135deg,#111827,#2563eb);color:white}.muted{color:#6b7280}
 </style>
-<div class="hero"><h1>🎙️ NeuroSpeech Coach</h1><p>Record natural, continuous speech and focus on words that may need review.</p></div>
+<div class="hero"><h1>ðŸŽ™ï¸ NeuroSpeech Coach</h1><p>Record natural, continuous speech and focus on words that may need review.</p></div>
 """, unsafe_allow_html=True)
 
 @st.cache_resource
@@ -79,7 +79,7 @@ if result:
         with st.container(border=True):
             left, right = st.columns([3,1])
             left.markdown(f'### {item["word"]}')
-            left.write(f'Confidence: **{item["score"]:.0%}** · Time: {item["start"]:.1f}s–{item["end"]:.1f}s')
+            left.write(f'Confidence: **{item["score"]:.0%}** Â· Time: {item["start"]:.1f}sâ€“{item["end"]:.1f}s')
             if right.button("Give example", key=f"example_{i}"):
                 st.session_state[f"example_{i}"] = True
             if st.session_state.get(f"example_{i}"):
@@ -88,7 +88,7 @@ if result:
                 st.write(f'**Practice:** {", ".join(item["guide"]["practice"])}')
     with st.expander("Repeated focus words"):
         for x in sorted(st.session_state.history.values(), key=lambda v: -v["count"]):
-            st.write(f'**{x["word"]}** — flagged {x["count"]} time(s)')
+            st.write(f'**{x["word"]}** â€” flagged {x["count"]} time(s)')
     st.download_button("Download JSON report", json.dumps(result, indent=2), "speech_analysis.json", "application/json")
 
-st.divider(); st.caption("Educational feedback only—not a medical or speech-language diagnosis.")
+st.divider(); st.caption("Educational feedback onlyâ€”not a medical or speech-language diagnosis.")
