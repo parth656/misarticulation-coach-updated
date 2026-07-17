@@ -394,8 +394,7 @@ if st.button(
                 device=device,
                 compute_type=compute_type,
                 language=language or None,
-                initial_prompt="
-".join(prompt_parts),
+                initial_prompt="".join(prompt_parts),
             )
 
             status.write("Applying conservative word filtering...")
