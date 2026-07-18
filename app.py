@@ -52,13 +52,13 @@ def save_audio(data: bytes, suffix: str) -> str:
         return file.name
 
 
-@st.cache_resource(show_spinner=False)
+@st.cache_resource(show_spinner=False, max_entries=1)
 def load_model(model_name: str):
     return WhisperModel(
         model_name,
         device="cpu",
         compute_type="int8",
-        cpu_threads=max(1, (os.cpu_count() or 4) - 1),
+        cpu_threads=max(1, min(2, os.cpu_count() or 1)),
         num_workers=1,
     )
 
@@ -224,12 +224,34 @@ if "history" not in st.session_state:
 
 with st.sidebar:
     st.header("Settings")
-    model_name = st.selectbox("Whisper model", ["tiny", "base", "small"], index=2)
-    language = st.text_input("Language code", "en").strip().lower()
+    model_options = {
+        "Large V3 - maximum accuracy (cloud experimental)": "large-v3",
+        "Large V3 Turbo - advanced multilingual, faster": "large-v3-turbo",
+        "Distil Large V3 - advanced English, recommended": "distil-large-v3",
+        "Medium English - accurate fallback": "medium.en",
+        "Small English - reliable low-memory fallback": "small.en",
+        "Base English - fastest fallback": "base.en",
+    }
+    selected_model = st.selectbox(
+        "Whisper model",
+        list(model_options),
+        index=2,
+        help="Only one selected model is retained in the Streamlit cache.",
+    )
+    model_name = model_options[selected_model]
+    language = "en"
+    st.text_input("Language", "English", disabled=True)
     threshold = st.slider("Review threshold", 0.20, 0.90, 0.55, 0.01)
     min_length = st.slider("Minimum word length", 3, 8, 4)
     maximum = st.slider("Maximum focus words", 3, 25, 10)
-    st.info("Cloud-safe configuration: CPU with int8. Start with the small model.")
+    if model_name == "large-v3":
+        st.error("Highest accuracy, but it may exceed free Streamlit Cloud memory or execution limits.")
+    elif model_name == "large-v3-turbo":
+        st.warning("Advanced and multilingual, but still relatively heavy for free Streamlit Cloud.")
+    elif model_name == "distil-large-v3":
+        st.success("Recommended advanced English model for the best cloud accuracy/resource balance.")
+    else:
+        st.info("Lower-memory fallback selected. CPU INT8 and a single model cache entry are enabled.")
 
 mode = st.radio("Analysis mode", ["Read a reference passage", "Free speech"], horizontal=True)
 reference = ""

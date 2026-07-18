@@ -1,23 +1,22 @@
-# NeuroSpeech Coach — Continuous Speech
+# NeuroSpeech Coach - Advanced Whisper Chooser
 
-This update records natural long-form speech, creates a timestamped transcript, flags uncertain words, offers a **Give example** action, and tracks repeated focus words during the current session.
+The sidebar now lets you choose among several Whisper accuracy levels.
 
-## Windows setup
+## Models
 
-```powershell
-cd C:\Users\10857768\Downloads\misarticulation-coach
-py -3.10 -m venv .venv
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-streamlit run app.py
-```
+- `large-v3`: maximum accuracy and multilingual support; experimental on free Streamlit Community Cloud.
+- `large-v3-turbo`: advanced multilingual model with faster decoding and a small accuracy trade-off.
+- `distil-large-v3`: recommended advanced English model for Streamlit Cloud.
+- `medium.en`: accurate English fallback.
+- `small.en`: reliable lower-memory English fallback.
+- `base.en`: fastest emergency fallback.
 
-Replace your current `app.py`, add `speech_analyzer.py`, and replace `requirements.txt`.
+The default is `distil-large-v3`. CPU INT8 inference, at most two CPU threads, one worker, and one cached model entry are used to control cloud memory.
 
-The first run downloads the selected Whisper model. Subsequent runs use the locally cached model. `base` or `small` is recommended for a laptop CPU.
+## Deploy
+
+Replace the supplied files in your GitHub repository, commit and push them, and reboot the Streamlit app. The first analysis after changing a model can be slow because its files must be downloaded. If `large-v3` causes a resource-limit error, reboot and select `distil-large-v3`, `medium.en`, or `small.en`.
 
 ## Limitation
 
-The app uses recognition uncertainty to select words for review. This is useful for practice but is not proof of mispronunciation or a clinical diagnosis. Noise, accent, speed, uncommon names and microphone quality can lower confidence.
+This app provides educational recognition feedback, not a clinical diagnosis.
