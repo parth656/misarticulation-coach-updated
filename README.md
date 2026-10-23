@@ -1,22 +1,44 @@
-# NeuroSpeech Coach - Advanced Whisper Chooser
+# NeuroSpeech Coach — Whisper Model Selection
 
-The sidebar now lets you choose among several Whisper accuracy levels.
+A speech-practice application that exposes a sidebar selector for choosing a Whisper model. The repository's existing notes describe English-only and multilingual model options and resource-aware defaults for constrained hosting environments.
 
-## Models
+## Model choices
 
-- `large-v3`: maximum accuracy and multilingual support; experimental on free Streamlit Community Cloud.
-- `large-v3-turbo`: advanced multilingual model with faster decoding and a small accuracy trade-off.
-- `distil-large-v3`: recommended advanced English model for Streamlit Cloud.
-- `medium.en`: accurate English fallback.
-- `small.en`: reliable lower-memory English fallback.
-- `base.en`: fastest emergency fallback.
+The current application documentation lists these options:
 
-The default is `distil-large-v3`. CPU INT8 inference, at most two CPU threads, one worker, and one cached model entry are used to control cloud memory.
+- `base.en` — lower resource demand and faster startup
+- `small.en` and `medium.en` — larger English models with higher resource requirements
+- `distil-large-v3` — advanced English speech recognition
+- `large-v3` and `large-v3-turbo` — multilingual options with greater resource requirements
 
-## Deploy
+Model availability, language support, memory use, and licensing depend on the installed Whisper implementation and model source. Confirm the exact options in the current code before deploying.
 
-Replace the supplied files in your GitHub repository, commit and push them, and reboot the Streamlit app. The first analysis after changing a model can be slow because its files must be downloaded. If `large-v3` causes a resource-limit error, reboot and select `distil-large-v3`, `medium.en`, or `small.en`.
+## Run locally
 
-## Limitation
+```bash
+git clone https://github.com/parth656/misarticulation-coach-updated.git
+cd misarticulation-coach-updated
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+streamlit run app.py
+```
 
-This app provides educational recognition feedback, not a clinical diagnosis.
+If the entry point or dependency filename differs in the current branch, use the actual files in the repository.
+
+## Deployment guidance
+
+On free hosting tiers, start with a smaller model and measure memory and startup time. Larger models can fail due to RAM limits, slow downloads, or CPU constraints. Cache models only when the host's storage and memory behavior support it.
+
+## Important limitations
+
+Speech-to-text is not the same as phoneme-level pronunciation assessment. Transcript mismatches can result from accent, noise, recording quality, or model errors. Present results as practice feedback, not a clinical diagnosis or definitive pronunciation score.
+
+## Validation checklist
+
+- [ ] Test each selectable model in the target deployment environment.
+- [ ] Show a clear error when a model cannot be downloaded or loaded.
+- [ ] Document supported languages and resource requirements.
+- [ ] Add screenshots and sample audio workflow.
+- [ ] Keep audio retention and privacy behavior explicit.
